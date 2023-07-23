@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Classification Prediction</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css">
+    <!-- Font Awesome CSS link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Chat messages will be dynamically added here -->
+        </div>
+        <div>
+            <form method="post" action="#" class="input-group chat-input" onsubmit="return sendMessage(event)">
+                <input type="text" id="user_input" name="user_text" class="form-control" placeholder="Type your message here...">
+                <button class="btn btn-primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap and Font Awesome JavaScript links -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script>
+        // JavaScript code for sending a message and receiving prediction
+        function sendMessage(event) {
+            event.preventDefault(); // Prevent the form from submitting and reloading the page
+            const userMessage = document.getElementById("user_input").value;
+            const chatMessages = document.getElementById("chat-messages");
+            chatMessages.innerHTML += `
+                <div class="message user-message">
+                    <i class="fas fa-user-circle avatar"></i>
+                    ${userMessage}
+                </div>`;
+            
+            // Send the userMessage to the server for prediction
+            const formData = new FormData();
+            formData.append('user_text', userMessage);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const predictionMessage = `
+                    <div class="message other-message">
+                        <i class="fas fa-robot avatar"></i>
+                        ${data.prediction}
+                    </div>`;
+                chatMessages.innerHTML += predictionMessage;
+                chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom of the chat messages
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            // Clear the input field after sending the message
+            document.getElementById("user_input").value = "";
+        }
+    </script>
+</body>
+</html>
