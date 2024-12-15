@@ -25,12 +25,12 @@ df.head()
 
 def preprocess(text):
     text = str(text).lower()
-    text = re.sub('\[.*?\]', '', text)
+    text = re.sub(r'\[.*?\]', '', text)
     text = re.sub(r'https?://\S+|www\.\S+', '', text)
-    text = re.sub('<.*?>+', '', text)
-    text = re.sub('[' + re.escape(string.punctuation) + ']', '', text)
-    text = re.sub('\n', '', text)
-    text = re.sub('\w*\d\w*', '', text)
+    text = re.sub(r'<.*?>+', '', text)
+    text = re.sub(r'[' + re.escape(string.punctuation) + ']', '', text)
+    text = re.sub(r'\n', '', text)
+    text = re.sub(r'\w*\d\w*', '', text)
     text = [word for word in text.split(" ") if word not in stopwords_set]
     text = " ".join(text)
     return text
@@ -68,4 +68,4 @@ def predict():
     
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
